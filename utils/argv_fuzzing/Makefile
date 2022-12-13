@@ -46,7 +46,7 @@ argvdump64.so: argvdump.c
 install: argvfuzz64.so argvdump64.so
 	install -d -m 755 $(DESTDIR)$(HELPER_PATH)/
 	if [ -f argvfuzz64.so ]; then set -e; install -m 755 argvfuzz64.so $(DESTDIR)$(HELPER_PATH)/; fi
-	if [ -f argvdump64.so ]; then set -e; install -m 755 argvfuzz64.so $(DESTDIR)$(HELPER_PATH)/; fi
+	if [ -f argvdump64.so ]; then set -e; install -m 755 argvdump64.so $(DESTDIR)$(HELPER_PATH)/; fi
 	cp argv-fuzz-inl.h $(DESTDIR)$(HELPER_PATH)
 
 clean:
