@@ -43,7 +43,7 @@ argvfuzz64.so: argvfuzz.c
 argvdump64.so: argvdump.c
 	$(CC) $(M64FLAG) $(CFLAGS) $^ $(LDFLAGS) -luuid -o $@
 
-install: argvfuzz64.soargvdump64.so
+install: argvfuzz64.so argvdump64.so
 	install -d -m 755 $(DESTDIR)$(HELPER_PATH)/
 	if [ -f argvfuzz64.so ]; then set -e; install -m 755 argvfuzz64.so $(DESTDIR)$(HELPER_PATH)/; fi
 	if [ -f argvdump64.so ]; then set -e; install -m 755 argvfuzz64.so $(DESTDIR)$(HELPER_PATH)/; fi
