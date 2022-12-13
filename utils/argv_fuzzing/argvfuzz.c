@@ -14,6 +14,7 @@
 
 #define _GNU_SOURCE                                        /* for RTLD_NEXT */
 #include <dlfcn.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -41,7 +42,13 @@ int __libc_start_main(int (*main)(int, char **, char **), int argc, char **argv,
 
   }
 
+
   sub_argv = afl_init_argv(&sub_argc);
+
+  if(sub_argc == 0) {
+	  sub_argc = 1;
+  }
+  sub_argv[0] = argv[0];
 
   return orig(main, sub_argc, sub_argv, init, fini, rtld_fini, stack_end);
 

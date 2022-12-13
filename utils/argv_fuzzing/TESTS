@@ -1,0 +1,10 @@
+# basic arg and env test
+FUZZ_OUTPUT_BASE=$PWD FUZZ_I_BASEPROG=date LD_PRELOAD=$PWD/argvdump64.so date -u
+# check produced output
+FUZZ_OUTPUT_BASE=$PWD FUZZ_I_BASEPROG=date LD_PRELOAD=$PWD/argvfuzz64.so date < fuzzi_date_2E4E9C32-FEBE-4257-B287-36ABA6D356F7.arg
+
+# file input test
+echo "12345" > sha1sum.in
+FUZZ_I_BASEPROG=sha1sum FUZZ_OUTPUT_BASE=$PWD ENV_FUZZ_COUNT=0 FUZZ_HAS_FILE_INPUT=1 LD_PRELOAD=$PWD/argvdump64.so sha1sum sha1sum.in
+# check produced output
+FUZZ_I_BASEPROG=sha1sum FUZZ_OUTPUT_BASE=$PWD ENV_FUZZ_COUNT=0 FUZZ_HAS_FILE_INPUT=1 LD_PRELOAD=$PWD/argvfuzz64.so sha1sum sha1sum.in < fuzzi_sha1sum_5E0857F5-E566-4A94-BAA8-488D5EC31104.arg
