@@ -28,7 +28,6 @@ LDFLAGS_ADD=$(_LDFLAGS_ADD:0=-ldl)
 LDFLAGS  += $(LDFLAGS_ADD)
 
 # on gcc for arm there is no -m32, but -mbe32
-M32FLAG = -m32 -Wno-unused-function
 M64FLAG = -m64 -Wno-unused-function
 
 CC_IS_GCC=$(shell $(CC) --version 2>/dev/null | grep -q gcc; echo $$?)
@@ -36,29 +35,19 @@ CC_IS_GCC:sh=$(CC) --version 2>/dev/null | grep -q gcc; echo $$?
 CC_IS_ARMCOMPILER=$(shell $(CC) -v 2>&1 >/dev/null | grep -q arm; echo $$?)
 CC_IS_ARMCOMPILER:sh=$(CC) -v 2>&1 >/dev/null | grep -q arm; echo $$?
 
-_M32FLAG=$(CC_IS_GCC)$(CC_IS_ARMCOMPILER)
-__M32FLAG=$(_M32FLAG:00=-mbe32)
-___M32FLAG=$(__M32FLAG:$(CC_IS_GCC)$(CC_IS_ARMCOMPILER)=-m32)
-M32FLAG=$(___M32FLAG)
-
-all:  argvfuzz32.so argvfuzz64.so argvdump32.so argvdump64.so
-
-argvfuzz32.so: argvfuzz.c
-	$(CC) $(M32FLAG) $(CFLAGS) $^ $(LDFLAGS) -o $@ || echo "argvfuzz32 build failure (that's fine)"
+all: argvfuzz64.so argvdump64.so
 
 argvfuzz64.so: argvfuzz.c
-	$(CC) $(M64FLAG) $(CFLAGS) $^ $(LDFLAGS) -o $@ || echo "argvfuzz64 build failure (that's fine)"
-
-argvdump32.so: argvdump.c
-	$(CC) $(M32FLAG) $(CFLAGS) $^ $(LDFLAGS) -luuid -o $@ || echo "argvdump32 build failure (that's fine)"
+	$(CC) $(M64FLAG) $(CFLAGS) $^ $(LDFLAGS) -o $@
 
 argvdump64.so: argvdump.c
-	$(CC) $(M64FLAG) $(CFLAGS) $^ $(LDFLAGS) -luuid -o $@ || echo "argvdump64 build failure (that's fine)"
+	$(CC) $(M64FLAG) $(CFLAGS) $^ $(LDFLAGS) -luuid -o $@
 
-install: argvfuzz32.so argvfuzz64.so argvdump32.so argvdump64.so
+install: argvfuzz64.soargvdump64.so
 	install -d -m 755 $(DESTDIR)$(HELPER_PATH)/
-	if [ -f argvfuzz32.so ]; then set -e; install -m 755 argvfuzz32.so $(DESTDIR)$(HELPER_PATH)/; fi
 	if [ -f argvfuzz64.so ]; then set -e; install -m 755 argvfuzz64.so $(DESTDIR)$(HELPER_PATH)/; fi
+	if [ -f argvdump64.so ]; then set -e; install -m 755 argvfuzz64.so $(DESTDIR)$(HELPER_PATH)/; fi
+	cp argv-fuzz-inl.h $(DESTDIR)$(HELPER_PATH)
 
 clean:
-	rm -f argvfuzz32.so argvfuzz64.so argvdump32.so argvdump64.so
+	rm -f argvfuzz64.so argvdump64.so
