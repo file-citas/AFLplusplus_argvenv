@@ -45,13 +45,21 @@
 #include <uuid/uuid.h>
 
 #define FUZZ_ARGV_BUF_LEN 2048
-static int debugprint = 1;
+static int debugprint = 0;
 static void dprint(FILE* f, const char* format, ...) {
   va_list args;
   if(!debugprint) return;
   va_start(args, format);
   vfprintf(f, format, args);
   va_end(args);
+}
+
+static void check_debug(void) {
+  char *env_dprint = getenv("FUZZ_DPRINT");
+  debugprint = 0;
+  if(env_dprint && atoi(env_dprint) == 1) {
+    debugprint = 1;
+  }
 }
 
 #define AFL_INIT_ARGV()          \
@@ -139,6 +147,8 @@ static char **afl_init_argv(int *argc) {
   char *ptr = in_buf;
   int arglen = 0;
   int total_len = 0;
+
+  check_debug();
 
   has_file_input = target_has_file_input();
   afl_init_env(0);

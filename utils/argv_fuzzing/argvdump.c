@@ -59,6 +59,8 @@ static int is_fuzz_env(const char *name) {
     return 1;
   } else if(strcmp(name, "FUZZ_HAS_FILE_INPUT") == 0) {
     return 1;
+  } else if(strcmp(name, "FUZZ_DPRINT") == 0) {
+    return 1;
   }
   return 0;
 }
@@ -107,6 +109,8 @@ int __libc_start_main(int (*main)(int, char **, char **), int argc, char **argv,
     fprintf(stderr, "hook did not find original %s: %s\n", __func__, dlerror());
     exit(EXIT_FAILURE);
   }
+
+  check_debug();
 
   if(arg_filename[0] == 0) {
     snprintf(arg_filename, PATH_MAX, "%s.arg", generate_base_filename());
