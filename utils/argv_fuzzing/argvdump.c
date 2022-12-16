@@ -59,6 +59,8 @@ static int is_fuzz_env(const char *name) {
     return 1;
   } else if(strcmp(name, "FUZZ_HAS_FILE_INPUT") == 0) {
     return 1;
+  } else if(strcmp(name, "FUZZ_ISFUZZING") == 0) {
+    return 1;
   } else if(strcmp(name, "FUZZ_DPRINT") == 0) {
     return 1;
   }

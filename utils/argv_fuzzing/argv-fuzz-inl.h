@@ -207,14 +207,23 @@ static void afl_dump_argv(int argc, char** argv, int dump_fd) {
       dprint(stdout, "DMP Detected last file argument at %d: %s\n", argc, argv[i]);
       stdin_fd = open(argv[i], O_RDONLY);
       if(stdin_fd) {
-	write(dump_fd, "-", 2);
+	if(write(dump_fd, "-", 2)<=0) {
+	  fprintf(stderr, "DMP Failed to write\n");
+	  exit(EXIT_FAILURE);
+	}
 	len = read(stdin_fd, buf, MAX_CMDLINE_LEN);
 	dprint(stdout, "DMP Added %d bytes of fake stdin\n", len);
-	write(dump_fd, buf, len);
+	if(write(dump_fd, buf, len)<0) {
+	  fprintf(stderr, "DMP Failed to write\n");
+	  exit(EXIT_FAILURE);
+	}
 	close(stdin_fd);
       }
     } else {
-      write(dump_fd, argv[i], strlen(argv[i])+1);
+      if(write(dump_fd, argv[i], strlen(argv[i])+1)<0) {
+	  fprintf(stderr, "DMP Failed to write\n");
+	  exit(EXIT_FAILURE);
+      }
     }
   }
 }
