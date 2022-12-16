@@ -62,6 +62,14 @@ static void check_debug(void) {
   }
 }
 
+static int is_fuzzing(void) {
+  char *env_isfuzzing = getenv("FUZZ_ISFUZZING");
+  if(env_isfuzzing && atoi(env_isfuzzing) == 1) {
+    return 1;
+  }
+  return 0;
+}
+
 #define AFL_INIT_ARGV()          \
   do {                           \
                                  \
